@@ -59,6 +59,6 @@ classDiagram
   }
 
     User "1" --> "*" Place : owns
-    User "1" --> "*" Review : leaves
+    User "1" --> "*" Review : Writes
     Place "1" --> "*" Review : receives
-    Place "1" --> "*" Amenity : has
+    Place "1" o-- "*" Amenity : has
