@@ -11,6 +11,14 @@ class Place:
         self.location = location
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
+        self.amenities = []
+        self.reviews = []
+
+    def add_review(self, review):
+        self.reviews.append(review)
+
+    def add_amenity(self, amenity):
+        self.amenities.append(amenity)
 
     def update_place(self, title=None, description=None, price=None, location=None):
         if title:
@@ -29,4 +37,4 @@ class Place:
             f"Place '{self.title}' located at {self.location} has been deleted")
 
     def __str__(self):
-        return f"Place: {self.title}, Price: {self.price}, Location: {self.location}"
+        return f"Place {self.title}, Location: {self.location}, Owner: {self.owner.first_name} {self.owner.last_name}"
