@@ -12,6 +12,10 @@ class User:
         self.is_admin = is_admin
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
+        self.places = []
+
+    def add_place(self, place):
+        self.places.append(place)
 
     def login(self, email,  password):
         if self._email == email and self._password == password:
