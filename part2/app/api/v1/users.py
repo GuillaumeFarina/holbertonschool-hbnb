@@ -9,12 +9,14 @@ users = []
 @app.route('/api/v1/users', methods=['POST'])
 def creat_user():
     data = request.get_json()
+
+    if not data or not all(k in data for k in ('first_name', 'last_name', 'email', 'password')):
+        return jsonify({"error": "Missing required fields"}), 400
+
     new_user = User(data['first_name'], data['last_name'],
                     data['email'], data['password'])
     users.append(new_user)
     return jsonify({"message": "User created successfully"}), 201
-
-# ajouter des message d'erreur si la creation marche pas
 
 
 @app.route('/api/v1/users', methods=['GET'])
