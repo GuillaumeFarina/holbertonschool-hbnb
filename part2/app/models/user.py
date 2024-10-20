@@ -24,6 +24,7 @@ class User(BaseModel):
         self.email = self.validate_email(email)
         self.password = self.validate_password(password)
         self.is_admin = is_admin
+        self.places = []  # list to store related places
 
     @staticmethod
     def validate_name(name):
