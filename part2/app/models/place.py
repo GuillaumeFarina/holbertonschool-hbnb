@@ -21,6 +21,7 @@ class Place(BaseModel):
     """
     def __init__(self, title, description, price, latitude, longitude, owner):
         super().__init__()
+        self.id = str(uuid.uuid4())
         self.title = self.validate_title(title)
         self.description = description
         self.price = self.validate_price(price)
@@ -29,6 +30,8 @@ class Place(BaseModel):
         self.owner = self.validate_owner(owner)
         self.amenities = []
         self.reviews = []
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
 
     def add_review(self, review):
         """Add a review to the place."""
@@ -82,16 +85,28 @@ class Place(BaseModel):
         """
         if not isinstance(owner, User):
             raise ValueError("Owner must be an instance of User.")
-        return owner
+        return owner.id
 
     def save(self):
         """Update the updated_at timestamp whenever the object is modified"""
+        self.updated_at = datetime.now()
         super().save()
 
     def update(self, data):
         """
         Update the attributes of the object based on the provided dictionary
         """
+        if 'title' in data:
+            self.title = self.validate_title(data['title'])
+        if 'description' in data:
+            self.description = data['description']
+        if 'price' in data:
+            self.price = self.validate_price(data['price'])
+        if 'latitude' in data:
+            self.latitude = self.validate_latitude(data['latitude'])
+        if 'longitude' in data:
+            self.longitude = self.validate_longitude(data['longitude'])
+        self.updated_at = datetime.now()
         super().update(data)
 
     def create(self):
