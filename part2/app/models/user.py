@@ -5,6 +5,7 @@ import re
 from datetime import datetime
 from base_model import BaseModel
 
+
 class User(BaseModel):
     """
     User Class:
