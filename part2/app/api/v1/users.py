@@ -31,18 +31,16 @@ class UserList(Resource):
         """Register a new user"""
         user_data = api.payload
 
-        # Simulate email uniqueness check
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user:
             return {'error': 'Email already registered'}, 400
 
-        # Create the new user
         new_user = facade.create_user(user_data)
         return {
             'id': new_user.id,
             'first_name': new_user.first_name,
             'last_name': new_user.last_name,
-            'email': new_user._email  # Do not include the password
+            'email': new_user._email
         }, 201
 
     @api.response(200, 'List of users retrieved successfully')
@@ -73,7 +71,7 @@ class UserResource(Resource):
             'id': user.id,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'email': user._email  # Do not include the password
+            'email': user._email
         }, 200
 
     @api.expect(user_update_model, validate=True)
@@ -89,5 +87,5 @@ class UserResource(Resource):
             'id': updated_user.id,
             'first_name': updated_user.first_name,
             'last_name': updated_user.last_name,
-            'email': updated_user._email  # Do not include the password
+            'email': updated_user._email
         }, 200
