@@ -1,27 +1,30 @@
-import uuid
-from datetime import datetime
+from basemodel import BaseModel
 
 
-class Review:
+class Review(BaseModel):
     def __init__(self, rating, comment, user_id, place_id):
-        self.id = str(uuid.uuid4())
-        self.rating = rating
+        super().__init__()
+        self.rating = self.validate_rating(rating)
         self.comment = comment
         self.user_id = user_id
         self.place_id = place_id
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+
+    @staticmethod
+    def validate_rating(rating):
+        if not 1 <= rating <= 5:
+            raise ValueError("Rating must be between 1 and 5")
+        return rating
 
     @staticmethod
     def add_review(rating, comment, user_id, place_id):
         return Review(rating, comment, user_id, place_id)
 
     def update_review(self, rating=None, comment=None):
-        if rating:
-            self.rating = rating
+        if rating is not None:
+            self.rating = self.validate_rating(rating)
         if comment:
             self.comment = comment
-        self.updated_at = datetime.now()
+        self.save()
         print(f"Review {self.id} updated successfully")
 
     def delete_review(self):

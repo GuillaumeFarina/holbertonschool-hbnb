@@ -1,30 +1,28 @@
-import uuid
-from datetime import datetime
+from basemodel import BaseModel
 
 
-class User:
+class User(BaseModel):
     def __init__(self, first_name, last_name, email, password, is_admin=False):
-        self.id = str(uuid.uuid4())
+        super().__init__()
         self.first_name = first_name
         self.last_name = last_name
         self._email = email
         self._password = password
         self.is_admin = is_admin
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
         self.places = []
 
     def add_place(self, place):
         self.places.append(place)
 
-    def login(self, email,  password):
+    def login(self, email, password):
         if self._email == email and self._password == password:
             print(f"Login successful for {self.first_name} {self.last_name}")
             return True
         else:
-            print("invalide email or password")
+            print("Invalid email or password")
             return False
 
+    @staticmethod
     def create_user(first_name, last_name, email, password, is_admin=False):
         return User(first_name, last_name, email, password, is_admin)
 
@@ -37,7 +35,7 @@ class User:
             self._email = email
         if password:
             self._password = password
-        self.updated_at = datetime.now()
+        self.save()
         print(f"User {self.first_name} {self.last_name} updated successfully")
 
     def delete_user(self):

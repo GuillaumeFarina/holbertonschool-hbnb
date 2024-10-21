@@ -1,25 +1,22 @@
-import uuid
-from datetime import datetime
+from basemodel import BaseModel
 
 
-class Amenity:
+class Amenity(BaseModel):
     def __init__(self, name, description):
-        self.id = str(uuid.uuid4())
+        super().__init__()
         self.name = name
         self.description = description
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
 
     @staticmethod
-    def add_review(name, description):
+    def add_amenity(name, description):
         return Amenity(name, description)
 
-    def update_review(self, name=None, description=None):
+    def update_amenity(self, name=None, description=None):
         if name:
             self.name = name
         if description:
             self.description = description
-        self.updated_at = datetime.now()
+        self.save()
         print(f"Amenity {self.id} updated successfully")
 
     def delete_amenity(self):
