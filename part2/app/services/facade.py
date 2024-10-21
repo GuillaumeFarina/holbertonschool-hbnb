@@ -8,12 +8,28 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
-    # Méthode d'espace réservé pour créer un utilisateur
     def create_user(self, user_data):
-        # La logique sera implémentée dans des tâches ultérieures
-        pass
+        user = User(**user_data)
+        self.user_repo.add(user)
+        return user
 
-    # Méthode d'espace réservé pour récupérer un lieu par ID
-    def get_place(self, place_id):
-        # La logique sera implémentée dans des tâches ultérieures
-        pass
+    def get_user(self, user_id):
+        return self.user_repo.get(user_id)
+
+    def get_user_by_email(self, email):
+        return self.user_repo.get_by_attribute('email', email)
+
+    def get_all_users(self):
+        return self.user_repo.get_all()
+
+    def update_user(self, user_id, user_data):
+        user = self.user_repo.get(user_id)
+        if not user:
+            return None
+        user.update_user(
+            first_name=user_data.get('first_name'),
+            last_name=user_data.get('last_name'),
+            email=user_data.get('email'),
+            password=user_data.get('password')
+        )
+        return user
