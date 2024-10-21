@@ -2,8 +2,9 @@
 
 import uuid
 from datetime import datetime
-from base_model import BaseModel
-from place import Place
+from app.models.base_model import BaseModel
+from app.models.place import Place
+
 
 
 class Amenity(BaseModel):

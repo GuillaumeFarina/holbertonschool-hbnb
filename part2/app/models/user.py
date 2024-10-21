@@ -3,7 +3,7 @@
 import uuid
 import re
 from datetime import datetime
-from base_model import BaseModel
+from app.models.base_model import BaseModel
 
 
 class User(BaseModel):
@@ -26,6 +26,11 @@ class User(BaseModel):
         self.password = self.validate_password(password)
         self.is_admin = is_admin
         self.places = []  # list to store related places
+
+    @staticmethod
+    def validate_request_data(data):
+        if 'first_name' not in data or 'last_name' not in data or 'email' not in data or 'password' not in data:
+            raise ValueError("Missing required fields")
 
     @staticmethod
     def validate_name(name):

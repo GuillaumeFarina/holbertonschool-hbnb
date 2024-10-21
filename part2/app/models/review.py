@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from user import User
 from place import Place
-from base_model import BaseModel
+from app.models.base_model import BaseModel
 
 
 class Review(BaseModel):
