@@ -1,4 +1,4 @@
-from basemodel import BaseModel
+from app.models.base_model import BaseModel
 
 
 class User(BaseModel):
@@ -10,6 +10,10 @@ class User(BaseModel):
         self._password = password
         self.is_admin = is_admin
         self.places = []
+
+    @property
+    def email(self):
+        return self._email
 
     def add_place(self, place):
         self.places.append(place)
