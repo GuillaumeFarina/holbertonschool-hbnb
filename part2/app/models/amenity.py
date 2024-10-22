@@ -1,26 +1,14 @@
-from app.models.base_model import BaseModel
+from base_model import BaseModel
 
 
-class Amenity(BaseModel):
-    def __init__(self, name, description):
+class Place(BaseModel):
+    def __init__(self, title, description, price, latitude, longitude, owner):
         super().__init__()
-        self.name = name
+        self.title = title
         self.description = description
-
-    @staticmethod
-    def add_amenity(name, description):
-        return Amenity(name, description)
-
-    def update_amenity(self, name=None, description=None):
-        if name:
-            self.name = name
-        if description:
-            self.description = description
-        self.save()
-        print(f"Amenity {self.id} updated successfully")
-
-    def delete_amenity(self):
-        print(f"Amenity {self.id} has been deleted")
-
-    def __str__(self):
-        return f"Amenity {self.id}: {self.name}, Description: {self.description}"
+        self.price = price
+        self.latitude = latitude
+        self.longitude = longitude
+        self.owner = owner
+        self.reviews = []  # List to store related reviews
+        self.amenities = []  # List to store related amenities

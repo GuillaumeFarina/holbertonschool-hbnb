@@ -1,49 +1,35 @@
-from app.models.base_model import BaseModel
+from base_model import BaseModel
+import re
 
 
 class User(BaseModel):
-    def __init__(self, first_name, last_name, email, password, is_admin=False):
+    def __init__(self, first_name, last_name, email, is_admin=False):
         super().__init__()
-        self.first_name = first_name
-        self.last_name = last_name
-        self._email = email
-        self._password = password
+        self.first_name = self.validate_name(first_name)
+        self.last_name = self.validate_name(last_name)
+        self.email = self.validate_email(email)
         self.is_admin = is_admin
         self.places = []
 
-    @property
-    def email(self):
-        return self._email
-
-    def add_place(self, place):
-        self.places.append(place)
-
-    def login(self, email, password):
-        if self._email == email and self._password == password:
-            print(f"Login successful for {self.first_name} {self.last_name}")
-            return True
-        else:
-            print("Invalid email or password")
-            return False
-
+# valid user_name
     @staticmethod
-    def create_user(first_name, last_name, email, password, is_admin=False):
-        return User(first_name, last_name, email, password, is_admin)
+    def validate_name(name):
+        if not isinstance(name, str) or len(name) < 1 or len(name) > 50:
+            raise ValueError("Name must be a string with 1 to 50 characters.")
+        return name
 
-    def update_user(self, first_name=None, last_name=None, email=None, password=None):
-        if first_name:
-            self.first_name = first_name
-        if last_name:
-            self.last_name = last_name
-        if email:
-            self._email = email
-        if password:
-            self._password = password
-        self.save()
-        print(f"User {self.first_name} {self.last_name} updated successfully")
+# valide email format
+    @staticmethod
+    def validate_email(email):
+        regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(regex, email):
+            raise ValueError("Email must follow standard email format.")
+        return email
 
-    def delete_user(self):
-        print(f"User {self.first_name} {self.last_name} has been deleted")
+    def add_(self, review):
+        """Add a review to the place."""
+        self.reviews.append(review)
 
-    def __str__(self):
-        return f"User {self.first_name} {self.last_name}, Email: {self._email}, Admin: {self.is_admin}"
+    def add_amenity(self, amenity):
+        """Add an amenity to the place."""
+        self.amenities.append(amenity)
