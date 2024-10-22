@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 
-import uuid
+from uuid import uuid4
 from datetime import datetime
 from app.models.base_model import BaseModel
 from app.models.user import User
-
 
 class Place(BaseModel):
     """
@@ -19,17 +18,15 @@ class Place(BaseModel):
     - created_at (DateTime): Timestamp when the place is created.
     - updated_at (DateTime): Timestamp when the place is last updated.
     """
-    def __init__(self, title, description, price, latitude, longitude, owner):
-        super().__init__()
-        self.id = str(uuid.uuid4())
-        self.title = self.validate_title(title)
+    def __init__(self, title, description, price, latitude, longitude, owner_id, amenities=None):
+        self.id = str(uuid4())
+        self.title = title
         self.description = description
-        self.price = self.validate_price(price)
-        self.latitude = self.validate_latitude(latitude)
-        self.longitude = self.validate_longitude(longitude)
-        self.owner = self.validate_owner(owner)
-        self.amenities = []
-        self.reviews = []
+        self.price = price
+        self.latitude = latitude
+        self.longitude = longitude
+        self.owner_id = owner_id
+        self.amenities = amenities if amenities else []
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
 
@@ -113,11 +110,21 @@ class Place(BaseModel):
         """Create a new place instance."""
         print(f"Place '{self.title}' created successfully.")
 
-    def delete(self):
-        """Delete the place instance."""
-        print(f"Place '{self.title}' has been deleted.")
-
     @classmethod
     def list(cls):
         """List all places."""
         print("Listing all places...")
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'price': self.price,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'owner_id': self.owner_id,
+            'amenities': self.amenities,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
