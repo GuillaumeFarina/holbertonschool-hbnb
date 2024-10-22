@@ -18,13 +18,14 @@ class User(BaseModel):
     - created_at (DateTime): Timestamp when the user is created.
     - updated_at (DateTime): Timestamp when the user is last updated.
     """
-    def __init__(self, first_name, last_name, email, password, is_admin=False):
+    def __init__(self, first_name, last_name, email, password, is_admin=False, is_owner=False):
         super().__init__()
         self.first_name = self.validate_name(first_name)
         self.last_name = self.validate_name(last_name)
         self.email = self.validate_email(email)
         self.password = self.validate_password(password)
         self.is_admin = is_admin
+        self.is_owner = is_owner
         self.places = []  # list to store related places
 
     @staticmethod
@@ -42,8 +43,23 @@ class User(BaseModel):
     def validate_email(email):
         regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
         if not re.match(regex, email):
-            raise ValueError("Email must follow standard email format.")
+            raise ValueError("Invalid email format")
         return email
+    
+    def update_user(self, data, first_name=None, last_name=None, email=None, password=None, is_owner=False):
+        """Update the user's attributes."""
+        if first_name:
+            self.first_name = self.validate_name(first_name)
+        if last_name:
+            self.last_name = self.validate_name(last_name)
+        if email:
+            self.email = self.validate_email(email)
+        if password:
+            self.password = self.validate_password(password)
+        if is_owner:
+            self.is_owner = self.is_owner(is_owner)
+        super().update(data)
+        print(f"User {self.first_name} {self.last_name} updated successfully")
 
     @staticmethod
     def validate_password(password):
@@ -67,12 +83,6 @@ class User(BaseModel):
         """Update the updated_at timestamp whenever the object is modified"""
         super().save()
 
-    def update(self, data):
-        """
-        Update the attributes of the object based on the provided dictionary
-        """
-        super().update(data)
-
     def login(self, email, password):
         """Check if the provided email and password match the user's credentials."""
         if self.email == email and self.password == password:
@@ -86,20 +96,3 @@ class User(BaseModel):
     def create_user(cls, first_name, last_name, email, password, is_admin=False):
         """Create a new user instance."""
         return cls(first_name, last_name, email, password, is_admin)
-
-    def update_user(self, first_name=None, last_name=None, email=None, password=None):
-        """Update the user's attributes."""
-        if first_name:
-            self.first_name = self.validate_name(first_name)
-        if last_name:
-            self.last_name = self.validate_name(last_name)
-        if email:
-            self.email = self.validate_email(email)
-        if password:
-            self.password = self.validate_password(password)
-        self.save()
-        print(f"User {self.first_name} {self.last_name} updated successfully")
-
-    def delete_user(self):
-        """Delete the user instance."""
-        print(f"User {self.first_name} {self.last_name} has been deleted")
