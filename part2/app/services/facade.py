@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
-from uuid import uuid4
+import uuid
 from app.persistence.repository import InMemoryRepository
 from datetime import datetime
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
+from ..models.review import Review
 
 class HBnBFacade:
     def __init__(self):
@@ -14,10 +15,10 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
         self.places = []
+        self.reviews = []
 
-    """ 
-    USER
-    """
+    """ USER """
+
     def create_user(self, user_data):
         # Placeholder method for creating a user
         user = User(**user_data)
@@ -46,9 +47,8 @@ class HBnBFacade:
             obj.update(user_data)
         return obj
 
-    """ 
-    AMENITY 
-    """
+    """ AMENITY """
+
     def create_amenity(self, amenity_data):
         # Placeholder for logic to create an amenity
         amenity = Amenity(**amenity_data)
@@ -72,9 +72,8 @@ class HBnBFacade:
             obj.update(amenity_data)
         return obj
 
-        """
-    PLACE
-    """
+    """ PLACE """
+
     def create_place(self, place_data):
         # Validate the data
         if place_data['price'] < 0:
@@ -134,3 +133,72 @@ class HBnBFacade:
             return place.to_dict()
         else:
             return {'error': 'Place not found'}
+
+    """ REVIEW """
+
+    def create_review(self, review_data):
+        # Validate the review data
+        Review.validate_request_data(review_data)
+        
+        # Create a new review with a unique ID
+        review = Review(id=str(uuid.uuid4()), **review_data)
+        
+        # Add the review to the repository
+        self.review_repo.add(review)
+        print(f"Review added: {review.to_dict()}")
+        
+        return review
+
+    def get_review(self, review_id):
+        # Retrieve a review by its ID
+        return self.review_repo.get(review_id)
+
+    def get_all_reviews(self):
+        # Retrieve all reviews
+        return list(self.review_repo.get_all())
+
+    def get_reviews_by_place(self, place_id):
+        # Retrieve all reviews for a specific place
+        all_reviews = self.review_repo.get_all()
+        print(f"Total reviews: {len(all_reviews)}")
+    
+        # Check that each review has a place_id.
+        for review in all_reviews:
+            print(f"Review ID: {review.id}, Place ID: {review.place_id}")
+    
+        filtered_reviews = [review for review in all_reviews if review.place_id == place_id]
+        print(f"Filtered reviews for place_id {place_id}: {len(filtered_reviews)}")
+    
+        return filtered_reviews
+    
+    def update_review(self, review_id, review_data):
+        # Validate the review data
+        Review.validate_request_data(review_data)
+        
+        # Retrieve the existing review
+        review = self.get_review(review_id)
+        
+        if review:
+            # Update the review with the new data
+            review.update(review_data)
+        
+        return review
+
+    def delete_review(self, review_id):
+        # Delete a review by its ID
+        return self.review_repo.delete(review_id)
+    
+    def add(self, review):
+        self.reviews.append(review)
+
+    def get(self, review_id):
+        for review in self.reviews:
+            if review.id == review_id:
+                return review
+        return None
+
+    def get_all(self):
+        return self.reviews
+
+    def delete(self, review_id):
+        self.reviews = [review for review in self.reviews if review.id != review_id]
