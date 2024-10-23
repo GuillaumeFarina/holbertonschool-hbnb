@@ -1,6 +1,7 @@
-from app.persistence.repository import InMemoryRepository
+from app.persistence.repository import InMemoryRepository, Repository
 from app.models.user import User
 from app.models.amenity import Amenity
+from app.models.place import Place
 
 
 class HBnBFacade:
@@ -75,3 +76,67 @@ class HBnBFacade:
             'name': amenity.name,
         })
         return amenity
+
+    # Plac
+    def get_place_by_title_and_location(self, title, latitude, longitude):
+        for place in self.place_repo.get_all():
+            if place.title == title and place.latitude == latitude and place.longitude == longitude:
+                return place
+
+    def create_place(self, place_data):
+        owner = self.get_user(place_data['owner_id'])
+        if not owner:
+            raise ValueError("Owner not found")
+
+        owner.become_owner()
+
+        amenities = []
+        for amenity_id in place_data['amenities']:
+            amenity = self.get_amenity_by_id(amenity_id)
+            if not amenity:
+                raise ValueError(f"Amenity with ID {amenity_id} not found")
+            amenities.append(amenity)
+
+        place = Place(
+            title=place_data['title'],
+            description=place_data.get('description', ""),
+            price=place_data['price'],
+            latitude=place_data['latitude'],
+            longitude=place_data['longitude'],
+            owner=owner
+        )
+        place.amenities = amenities
+
+        self.place_repo.add(place)
+        return place
+
+    def get_place(self, place_id):
+        return self.place_repo.get(place_id)
+
+    def get_all_places(self):
+        return self.place_repo.get_all()
+
+    def update_place(self, place_id, place_data):
+        place = self.get_place(place_id)
+        if not place:
+            raise ValueError("place not foud")
+
+        if 'title' in place_data:
+            place.title = place_data['first_name']
+        if 'description' in place_data:
+            place.description = place_data['description']
+        if 'price' in place_data:
+            place.price = place_data['price']
+        if 'latitude' in place_data:
+            place.latitude = place_data['latitude']
+        if 'longitude' in place_data:
+            place.longitude = place_data['longitude']
+
+        self.place_repo.update(place.id, {
+            'title': place.title,
+            'description': place.description,
+            'price': place.price,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+        })
+        pass
