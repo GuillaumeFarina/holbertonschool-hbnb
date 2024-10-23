@@ -19,7 +19,10 @@ class HBnBFacade:
         return user
 
     def get_user(self, user_id):
-        return self.user_repo.get(user_id)
+        user = self.user_repo.get(user_id)
+        if not user:
+            raise ValueError("Owner not found")
+        return user
 
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
@@ -41,7 +44,7 @@ class HBnBFacade:
             'last_name': user.last_name,
             'email': user.email
         })
-
+        return user
     # Placeholder method for fetching a place by ID
 
     def get_place(self, place_id):
@@ -61,8 +64,11 @@ class HBnBFacade:
     def get_amenity_by_id(self, amenity_id):
         return self.amenity_repo.get(amenity_id)
 
-    def get_all_amenities(self):
-        return self.amenity_repo.get_all()
+    def get_amenity_by_id(self, amenity_id):
+        amenity = self.amenity_repo.get(amenity_id)
+        if not amenity:
+            raise ValueError(f"Amenity with ID {amenity_id} not found")
+        return amenity
 
     def update_amenity(self, amenity_id, amenity_data):
         amenity = self.get_amenity_by_name(amenity_id)
