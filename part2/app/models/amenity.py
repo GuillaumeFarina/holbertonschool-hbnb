@@ -1,5 +1,4 @@
-from base_model import BaseModel
-from place import Place
+from app.models.base_model import BaseModel
 
 
 class Amenity(BaseModel):
