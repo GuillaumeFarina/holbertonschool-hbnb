@@ -19,6 +19,7 @@ class User(BaseModel):
     - updated_at (DateTime): Timestamp when the user is last updated.
     """
     def __init__(self, first_name, last_name, email, password, is_admin=False, is_owner=False):
+        self.id = str(uuid.uuid4())
         super().__init__()
         self.first_name = self.validate_name(first_name)
         self.last_name = self.validate_name(last_name)
@@ -96,3 +97,15 @@ class User(BaseModel):
     def create_user(cls, first_name, last_name, email, password, is_admin=False):
         """Create a new user instance."""
         return cls(first_name, last_name, email, password, is_admin)
+    
+    def to_dict(user):
+        """
+        Convert a User object to a dictionary
+        """
+        return {
+        'id': user.id,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'email': user.email,
+        'is_owner': user.is_owner
+    }
