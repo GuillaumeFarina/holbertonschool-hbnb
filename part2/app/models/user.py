@@ -5,7 +5,6 @@ import re
 from datetime import datetime
 from app.models.base_model import BaseModel
 
-
 class User(BaseModel):
     """
     User Class:
@@ -19,6 +18,7 @@ class User(BaseModel):
     - updated_at (DateTime): Timestamp when the user is last updated.
     """
     def __init__(self, first_name, last_name, email, password, is_admin=False, is_owner=False):
+        # Initialize the User with provided attributes and default values
         self.id = str(uuid.uuid4())
         super().__init__()
         self.first_name = self.validate_name(first_name)
@@ -31,17 +31,20 @@ class User(BaseModel):
 
     @staticmethod
     def validate_request_data(data):
+        """Validate the request data for creating or updating a User"""
         if 'first_name' not in data or 'last_name' not in data or 'email' not in data or 'password' not in data:
             raise ValueError("Missing required fields")
 
     @staticmethod
     def validate_name(name):
+        """Validate the name of the user"""
         if not isinstance(name, str) or len(name) > 50 or len(name) < 1:
             raise ValueError("Name must be a string with 1 to 50 characters.")
         return name
 
     @staticmethod
     def validate_email(email):
+        """Validate the email address of the user"""
         regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
         if not re.match(regex, email):
             raise ValueError("Invalid email format")
@@ -64,6 +67,7 @@ class User(BaseModel):
 
     @staticmethod
     def validate_password(password):
+        """Validate the password of the user"""
         if len(password) < 8:
             raise ValueError("Password must be at least 8 characters long.")
         if not re.search(r"[A-Z]", password):
@@ -99,13 +103,11 @@ class User(BaseModel):
         return cls(first_name, last_name, email, password, is_admin)
     
     def to_dict(user):
-        """
-        Convert a User object to a dictionary
-        """
+        """Convert a User object to a dictionary"""
         return {
-        'id': user.id,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email,
-        'is_owner': user.is_owner
-    }
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'is_owner': user.is_owner
+        }

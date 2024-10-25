@@ -4,6 +4,7 @@ from .base_model import BaseModel
 
 class Amenity(BaseModel):
     def __init__(self, name):
+        # Initialize the Amenity with a unique ID and timestamps
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
@@ -27,6 +28,9 @@ class Amenity(BaseModel):
 
     @staticmethod
     def validate_request_data(data: dict):
+        """
+        Validate the request data for creating or updating an Amenity
+        """
         for key, value in data.items():
             if key == 'name':
                 if not isinstance(value, str) or len(value) < 1 or len(value) > 50:
@@ -34,10 +38,12 @@ class Amenity(BaseModel):
         return data
 
     def to_dict(self):
+        """
+        Convert the Amenity object to a dictionary format
+        """
         return {
             'id': self.id,
             'name': self.name,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
-

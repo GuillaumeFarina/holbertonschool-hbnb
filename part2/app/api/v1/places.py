@@ -48,7 +48,7 @@ class PlaceList(Resource):
         """Register a new place"""
         place_data = api.payload
 
-        # Validation explicite des données
+        # Explicit data validation
         if not place_data.get('title'):
             return {'error': 'Title is required'}, 400
         if not isinstance(place_data.get('price'), (int, float)) or place_data['price'] <= 0:

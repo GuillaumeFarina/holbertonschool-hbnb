@@ -10,6 +10,7 @@ from ..models.review import Review
 
 class HBnBFacade:
     def __init__(self):
+        # Initialize repositories for users, places, reviews, and amenities
         self.user_repo = InMemoryRepository()
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
@@ -23,12 +24,13 @@ class HBnBFacade:
     def create_user(self, user_data):
         # Placeholder method for creating a user
         user = User(**user_data)
-        # User.check(user_data)
+        # Validate user data
         User.validate_request_data(user_data)
         self.user_repo.add(user)
         return user
 
     def get_user(self, user_id):
+        # Retrieve a user by ID
         user = next((user for user in self.users if user.id == user_id), None)
         if user is None:
             raise ValueError('User not found')
@@ -135,6 +137,7 @@ class HBnBFacade:
         return place
 
     def get_place_data(self, place_id):
+        # Retrieve place data by ID
         place = self.get_place(place_id)
         if place:
             return place.to_dict()
@@ -196,16 +199,20 @@ class HBnBFacade:
         return self.review_repo.delete(review_id)
     
     def add(self, review):
+        # Add a review to the list of reviews
         self.reviews.append(review)
 
     def get(self, review_id):
+        # Retrieve a review by its ID
         for review in self.reviews:
             if review.id == review_id:
                 return review
         return None
 
     def get_all(self):
+        # Retrieve all reviews
         return self.reviews
 
     def delete(self, review_id):
+        # Delete a review by its ID
         self.reviews = [review for review in self.reviews if review.id != review_id]

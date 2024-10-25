@@ -19,6 +19,7 @@ class Place(BaseModel):
     - updated_at (DateTime): Timestamp when the place is last updated.
     """
     def __init__(self, title, description, price, latitude, longitude, owner_id, amenities=None):
+        # Initialize the Place with provided attributes and default values
         self.id = str(uuid4())
         self.title = title
         self.description = description
@@ -116,6 +117,7 @@ class Place(BaseModel):
         print("Listing all places...")
 
     def to_dict(self):
+        """Convert the Place object to a dictionary format"""
         return {
             'id': self.id,
             'title': self.title,

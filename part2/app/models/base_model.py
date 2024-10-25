@@ -3,9 +3,9 @@
 import uuid
 from datetime import datetime
 
-
 class BaseModel:
     def __init__(self):
+        # Initialize the BaseModel with a unique ID and timestamps
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
         self.updated_at = datetime.now()

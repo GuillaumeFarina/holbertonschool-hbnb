@@ -98,3 +98,4 @@ class UserResource(Resource):
         if not updated_user:
             return {'error': 'User not found'}, 404
         return updated_user.to_dict(), 200
+
