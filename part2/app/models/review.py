@@ -8,6 +8,7 @@ from app.models.place import Place
 
 class Review(BaseModel):
     def __init__(self, id, text, rating, place_id, user_id):
+        # Initialize the Review with a unique ID and provided attributes
         self.id = str(uuid.uuid4())
         super().__init__()
         self.text = text
@@ -42,7 +43,7 @@ class Review(BaseModel):
     def validate_text(text):
         """Validate the text of the review."""
         if not isinstance(text, str) or len(text) < 1:
-            raise ValueError("text must be a non-empty string.")
+            raise ValueError("Text must be a non-empty string.")
         return text
 
     @staticmethod
@@ -61,6 +62,9 @@ class Review(BaseModel):
 
     @staticmethod
     def validate_request_data(data: dict):
+        """
+        Validate the request data for creating or updating a Review
+        """
         if 'text' in data:
             if not isinstance(data['text'], str) or len(data['text']) < 1:
                 raise ValueError('Text must not be empty')
@@ -76,6 +80,7 @@ class Review(BaseModel):
         return data
    
     def to_dict(self):
+        """Convert the Review object to a dictionary format"""
         return {
             'id': self.id,
             'text': self.text,
