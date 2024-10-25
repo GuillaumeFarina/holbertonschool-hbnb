@@ -32,7 +32,7 @@ place_model = api.model('Place', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
-    'owner_id': fields.String(required=True, description='ID of the owner'),
+    'owner_id': fields.String(required=False, description='ID of the owner'),
     'amenities': fields.List(fields.String, required=False, description="List of amenities ID's"),
     'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
 })
@@ -46,12 +46,23 @@ class PlaceList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new place"""
+        place_data = api.payload
+
+        # Validation explicite des données
+        if not place_data.get('title'):
+            return {'error': 'Title is required'}, 400
+        if not isinstance(place_data.get('price'), (int, float)) or place_data['price'] <= 0:
+            return {'error': 'Price must be a positive number'}, 400
+        if not -90 <= place_data.get('latitude', 0) <= 90:
+            return {'error': 'Latitude must be between -90 and 90'}, 400
+        if not -180 <= place_data.get('longitude', 0) <= 180:
+            return {'error': 'Longitude must be between -180 and 180'}, 400
+
         try:
-            place_data = api.payload
             new_place = facade.create_place(place_data)
             return new_place.to_dict(), 201
         except ValueError as e:
-            return {'message': str(e)}, 400
+            return {'error': str(e)}, 400
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
@@ -69,7 +80,7 @@ class PlaceResource(Resource):
             place = facade.get_place(place_id)
             return place.to_dict(), 200
         except ValueError as e:
-            return {'message': str(e)}, 404
+            return {'error': str(e)}, 404
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
@@ -82,4 +93,4 @@ class PlaceResource(Resource):
             updated_place = facade.update_place(place_id, place_data)
             return updated_place.to_dict(), 200
         except ValueError as e:
-            return {'message': str(e)}, 400
+            return {'error': str(e)}, 400
