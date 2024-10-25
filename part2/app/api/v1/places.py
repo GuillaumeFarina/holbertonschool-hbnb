@@ -39,6 +39,13 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
+        user_id = place_data.get('owner_id')
+        try:
+            owner_id = facade.user_is_owners(user_id)
+        except ValueError as e:
+            return {'error': str(e)}, 400
+
+        place_data['owner'] = owner_id
 
         existing_place = facade.get_place_by_title_and_location(
             place_data['title'], place_data['latitude'], place_data['longitude']
