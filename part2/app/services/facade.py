@@ -14,6 +14,7 @@ class HBnBFacade:
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
+        self.users = []
         self.places = []
         self.reviews = []
 
@@ -28,8 +29,10 @@ class HBnBFacade:
         return user
 
     def get_user(self, user_id):
-        # Placeholder method for fetching a user by ID
-        return self.user_repo.get(user_id)
+        user = next((user for user in self.users if user.id == user_id), None)
+        if user is None:
+            raise ValueError('User not found')
+        return user
 
     def get_user_by_email(self, email):
         # Placeholder method for fetching a user by email
@@ -75,22 +78,26 @@ class HBnBFacade:
     """ PLACE """
 
     def create_place(self, place_data):
-        # Validate the data
-        if place_data['price'] < 0:
-            raise ValueError("Price must be a non-negative float.")
-        if not (-90 <= place_data['latitude'] <= 90):
-            raise ValueError("Latitude must be between -90 and 90.")
-        if not (-180 <= place_data['longitude'] <= 180):
-            raise ValueError("Longitude must be between -180 and 180.")
-        
-        # Create the place
+        # Data Validation
+        if not place_data.get('title'):
+            raise ValueError('Title is required')
+        if not place_data.get('description'):
+            raise ValueError('Description is required')
+        if not isinstance(place_data.get('price'), (int, float)) or place_data['price'] <= 0:
+            raise ValueError('Price must be a positive number')
+        if not -90 <= place_data.get('latitude', 0) <= 90:
+            raise ValueError('Latitude must be between -90 and 90')
+        if not -180 <= place_data.get('longitude', 0) <= 180:
+            raise ValueError('Longitude must be between -180 and 180')
+
+        # Create place
         new_place = Place(
             title=place_data['title'],
             description=place_data['description'],
             price=place_data['price'],
             latitude=place_data['latitude'],
             longitude=place_data['longitude'],
-            owner_id=place_data['owner_id'],
+            owner_id=place_data.get('owner_id'),
             amenities=place_data.get('amenities', [])
         )
         self.places.append(new_place)
