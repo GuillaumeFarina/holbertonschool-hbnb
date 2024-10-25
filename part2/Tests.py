@@ -70,7 +70,7 @@ class TestUserEndpoints(unittest.TestCase):
             self.assertIn('User not found', json_response['error'])
     
     def test_update_user(self):
-    # Créez d'abord un utilisateur
+    # create a user
         response = self.client.post('/api/v1/users/', json={
             "first_name": "John",
             "last_name": "Doe",
@@ -79,7 +79,7 @@ class TestUserEndpoints(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 201)
 
-        # Mettez à jour l'utilisateur créé
+        # Update the created user
         response = self.client.put('/api/v1/users/{user_id}', json={
             "first_name": "Jane",
             "last_name": "Doe",
