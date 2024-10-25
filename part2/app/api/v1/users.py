@@ -12,7 +12,7 @@ user_model = api.model('User', {
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user'),
     'password': fields.String(required=True, description='Password of the user'),
-    'is_owner': fields.Boolean(required=False, description='is_owner of the user')
+    'is_owner': fields.Boolean(required=False, description='is_owner of the user', default=False)
 })
 
 facade = HBnBFacade()
@@ -47,6 +47,10 @@ class UserList(Resource):
             validate_email(user_data['email'])
         except ValueError as e:
             return {'error': str(e)}, 400
+        
+        # Validate first_name and last_name
+        if not user_data['first_name'] or not user_data['last_name']:
+            return {'error': 'Name must be a string with 1 to 50 characters.'}, 400
 
         # Simulate email uniqueness check (to be replaced by real validation with persistence)
         existing_user = facade.get_user_by_email(user_data['email'])
@@ -64,7 +68,7 @@ class UserList(Resource):
         users = facade.get_all_users()
         return [user.to_dict() for user in users], 200
 
-@api.route('/<user_id>')
+@api.route('/users/<user_id>')
 class UserResource(Resource):
     @api.response(200, 'User details retrieved successfully')
     @api.response(404, 'User not found')
