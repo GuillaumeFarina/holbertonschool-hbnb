@@ -11,6 +11,7 @@ class User(BaseModel):
         self.is_admin = is_admin
         self.is_owner = is_owner
         self.places = []
+        self.reviews = []
 
     @staticmethod
     def validate_data(data):
@@ -44,3 +45,7 @@ class User(BaseModel):
     @classmethod
     def delete_user():
         pass
+
+    def add_review(self, review):
+        """Add a review to the place."""
+        self.reviews.append(review)

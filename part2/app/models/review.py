@@ -1,14 +1,14 @@
-from base_model import BaseModel
-from place import Place
+from app.models.base_model import BaseModel
+from app.models.place import Place
 
 
-class review(BaseModel):
+class Review(BaseModel):
     def __init__(self, text, rating, place, user):
         super().__init__()
-        self.text = text.validate_text(text)
-        self.rating = rating.rating_check(rating)
-        self.place = place.place_check(place)
-        self.user = user.user_check(user)
+        self.text = self.validate_text(text)
+        self.rating = self.rating_check(rating)
+        self.place = self.place_check(place)
+        self.user = self.user_check(user)
         self.reviews = []
         self.amenities = []
 

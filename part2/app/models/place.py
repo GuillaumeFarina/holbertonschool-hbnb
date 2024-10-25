@@ -5,11 +5,11 @@ from app.models.user import User
 class Place(BaseModel):
     def __init__(self, title, description, price, latitude, longitude, owner):
         super().__init__()
-        self.title = title.validate_title(title)
+        self.title = self.validate_title(title)
         self.description = description
-        self.price = price.price_check(price)
-        self.latitude = latitude.latitude_check(latitude)
-        self.longitude = longitude.longitude_check(longitude)
+        self.price = self.price_check(price)
+        self.latitude = self.latitude_check(latitude)
+        self.longitude = self.longitude_check(longitude)
         self.owner = owner
         self.reviews = []
         self.amenities = []
@@ -50,6 +50,14 @@ class Place(BaseModel):
         if not isinstance(owner, User):
             raise ValueError("Owner must be an instance of User.")
         return owner.id
+
+    def add_review(self, review):
+        """Add a review to the place."""
+        self.reviews.append(review)
+
+    def add_amenity(self, amenity):
+        """Add an amenity to the place."""
+        self.amenities.append(amenity)
 
     def to_dict(self):
         return {

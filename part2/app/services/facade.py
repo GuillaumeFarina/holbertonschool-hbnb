@@ -116,6 +116,16 @@ class HBnBFacade:
         self.place_repo.add(place)
         return place
 
+    def user_is_owners(self, user_id):
+        print(f"Received user_id: {user_id}")
+
+        user = self.get_user(user_id)
+        if not user:
+            raise ValueError(f"Owner not found for user_id: {user_id}")
+
+        owner = user.id
+        return owner
+
     def get_place(self, place_id):
         return self.place_repo.get(place_id)
 
