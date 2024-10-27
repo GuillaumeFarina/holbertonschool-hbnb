@@ -98,10 +98,6 @@ class HBnBFacade:
         self.place_repo.add(place)
         return place
 
-    def get_place_id(self, place_data):
-        place_id = place_data['id']
-        return place_id
-
     def get_place(self, place_id):
         return self.place_repo.get(place_id)
 

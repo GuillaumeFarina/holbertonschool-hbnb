@@ -69,10 +69,26 @@ class PlaceResource(Resource):
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get place details by ID"""
-        place = facade.get_amenity_by_id(place_id)
+        place = facade.get_place(place_id)
         if not place:
-            return {'error': 'amenity not found'}, 404
-        return {'id': place.id, 'title': place.title, 'description': place.description, 'price': place.price, 'latitude': place.latitude, 'longitude': place.longitude}, 200
+            return {'error': 'place not found'}, 404
+
+        owner = facade.get_user(place.owner_id)
+
+        return {
+            'id': place.id,
+            'title': place.title,
+            'description': place.description,
+            'price': place.price,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+            'owner': {
+                'id': owner.id,
+                'first_name': owner.first_name,
+                'last_name': owner.last_name,
+                'email': owner.email
+            }
+        }, 200
 
     @api.expect(place_model, validate=True)
     @api.response(200, 'Place updated successfully')
