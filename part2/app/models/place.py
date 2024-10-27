@@ -3,24 +3,24 @@ from app.models.user import User
 
 
 class Place(BaseModel):
-    def __init__(self, title, description, price, latitude, longitude, owner):
+    def __init__(self, title, description, price, latitude, longitude, owner, amenities=None):
         super().__init__()
         self.title = self.validate_title(title)
         self.description = description
         self.price = self.price_check(price)
         self.latitude = self.latitude_check(latitude)
         self.longitude = self.longitude_check(longitude)
-        self.owner = owner
-        self.reviews = []
-        self.amenities = []
+        self.owner = self.validate_owner(owner)
+        self.owner_id = owner.id
+        self.amenities = amenities if amenities is not None else []
 
     @staticmethod
     def validate_data(data):
         if 'title' not in data or 'description' not in data or 'price' not in data or 'latitude' not in data or 'longitude' not in data or 'owner' not in data:
             raise ValueError("Missing required fields")
 
-    def validate_title(title):
-        if title not in isinstance(title, str) or len(title) > 100 or len(title) < 1:
+    def validate_title(self, title):
+        if not isinstance(title, str) or len(title) > 100 or len(title) < 1:
             raise ValueError("title is to long")
         return title
 
@@ -45,11 +45,10 @@ class Place(BaseModel):
     def add_review(self, review):
         self.reviews.append(review)
 
-    @staticmethod
-    def validate_owner(owner):
+    def validate_owner(self, owner):
         if not isinstance(owner, User):
             raise ValueError("Owner must be an instance of User.")
-        return owner.id
+        return owner
 
     def add_review(self, review):
         """Add a review to the place."""
@@ -67,6 +66,5 @@ class Place(BaseModel):
             'price': self.price,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'owner_id': self.owner.id,
-            'amenities': [amenity.to_dict() for amenity in self.amenities]
+            'owner_id': self.owner_id,
         }

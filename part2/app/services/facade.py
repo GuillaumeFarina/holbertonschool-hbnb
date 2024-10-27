@@ -1,7 +1,11 @@
-from app.persistence.repository import InMemoryRepository, Repository
+#!/usr/bin/python3
+
+
+from app.persistence.repository import InMemoryRepository
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
+from ..models.review import Review
 
 
 class HBnBFacade:
@@ -16,13 +20,10 @@ class HBnBFacade:
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
-        return user
+        return (user)
 
     def get_user(self, user_id):
-        user = self.user_repo.get(user_id)
-        if not user:
-            raise ValueError("Owner not found")
-        return user
+        return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
@@ -90,41 +91,16 @@ class HBnBFacade:
                 return place
 
     def create_place(self, place_data):
-        owner = self.get_user(place_data['owner_id'])
-        if not owner:
-            raise ValueError("Owner not found")
-
-        owner.become_owner()
-
-        amenities = []
-        for amenity_id in place_data['amenities']:
-            amenity = self.get_amenity_by_id(amenity_id)
-            if not amenity:
-                raise ValueError(f"Amenity with ID {amenity_id} not found")
-            amenities.append(amenity)
-
-        place = Place(
-            title=place_data['title'],
-            description=place_data.get('description', ""),
-            price=place_data['price'],
-            latitude=place_data['latitude'],
-            longitude=place_data['longitude'],
-            owner=owner
-        )
-        place.amenities = amenities
-
+        owner_id = place_data.pop('owner_id')
+        owner = self.get_user(owner_id)
+        place_data['owner'] = owner
+        place = Place(**place_data)
         self.place_repo.add(place)
         return place
 
-    def user_is_owners(self, user_id):
-        print(f"Received user_id: {user_id}")
-
-        user = self.get_user(user_id)
-        if not user:
-            raise ValueError(f"Owner not found for user_id: {user_id}")
-
-        owner = user.id
-        return owner
+    def get_place_id(self, place_data):
+        place_id = place_data['id']
+        return place_id
 
     def get_place(self, place_id):
         return self.place_repo.get(place_id)
@@ -134,8 +110,6 @@ class HBnBFacade:
 
     def update_place(self, place_id, place_data):
         place = self.get_place(place_id)
-        if not place:
-            raise ValueError("place not foud")
 
         if 'title' in place_data:
             place.title = place_data['first_name']
@@ -155,4 +129,7 @@ class HBnBFacade:
             'latitude': place.latitude,
             'longitude': place.longitude,
         })
-        pass
+        return place
+
+
+facade = HBnBFacade()
