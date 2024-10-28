@@ -28,13 +28,19 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=False, description="List of amenities ID's")
 })
 
-place_response_model = api.model('Place', {
+place_response_model = api.model('Place_response', {
     'title': fields.String(required=True, description='Title of the place'),
     'description': fields.String(description='Description of the place'),
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
+})
+
+place_update_model = api.model('Place_update', {
+    'title': fields.String(required=True, description='Title of the place'),
+    'description': fields.String(description='Description of the place'),
+    'price': fields.Float(required=True, description='Price per night'),
 })
 
 
@@ -74,7 +80,7 @@ class PlaceResource(Resource):
             return {'error': 'place not found'}, 404
 
         owner = facade.get_user(place.owner_id)
-
+        amenity = facade.get_amenity_by_id(place.amenity_id)
         return {
             'id': place.id,
             'title': place.title,
@@ -86,11 +92,17 @@ class PlaceResource(Resource):
                 'id': owner.id,
                 'first_name': owner.first_name,
                 'last_name': owner.last_name,
-                'email': owner.email
-            }
+                'email': owner.email,
+            },
+            'amenities': [
+                {
+                    "id": amenity.id,
+                    "name": amenity.name
+                }
+            ]
         }, 200
 
-    @api.expect(place_model, validate=True)
+    @api.expect(place_update_model, validate=True)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
@@ -98,10 +110,8 @@ class PlaceResource(Resource):
         """Update an place information"""
         place_data = api.payload
 
-        try:
-            updated_place = facade.update_amenity(place_id, place_data)
-            return {
-                'name': updated_place.name,
-            }, 200
-        except ValueError as e:
-            return {'error': str(e)}, 404
+        update_place = facade.update_place(place_id, place_data)
+
+        return {
+            "message": "Place updated successfully"
+        }, 200

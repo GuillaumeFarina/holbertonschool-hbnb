@@ -65,12 +65,6 @@ class HBnBFacade:
     def get_amenity_by_id(self, amenity_id):
         return self.amenity_repo.get(amenity_id)
 
-    def get_amenity_by_id(self, amenity_id):
-        amenity = self.amenity_repo.get(amenity_id)
-        if not amenity:
-            raise ValueError(f"Amenity with ID {amenity_id} not found")
-        return amenity
-
     def update_amenity(self, amenity_id, amenity_data):
         amenity = self.get_amenity_by_name(amenity_id)
         if not amenity:
@@ -108,24 +102,53 @@ class HBnBFacade:
         place = self.get_place(place_id)
 
         if 'title' in place_data:
-            place.title = place_data['first_name']
+            place.title = place_data['title']
         if 'description' in place_data:
             place.description = place_data['description']
         if 'price' in place_data:
             place.price = place_data['price']
-        if 'latitude' in place_data:
-            place.latitude = place_data['latitude']
-        if 'longitude' in place_data:
-            place.longitude = place_data['longitude']
 
         self.place_repo.update(place.id, {
             'title': place.title,
             'description': place.description,
-            'price': place.price,
-            'latitude': place.latitude,
-            'longitude': place.longitude,
+            'price': place.price
         })
         return place
+
+# Reviews
+
+    def create_review(self, review_data):
+        user_id = review_data.pop('user_id')
+        user = self.get_user(user_id)
+        review_data['user'] = user
+
+        place_id = review_data.pop('place_id')
+        place = self.get_place(place_id)
+        review_data['place'] = place
+
+        review = Review(**review_data)
+        self.review_repo.add(review)
+
+        review.user_id = user_id
+        review.place_id = place_id
+        print(f"print new revi from facade {review}")
+        return review
+
+    def get_review(self, review_id):
+        review = self.review_repo.get(review_id)
+        return review
+
+    def get_all_reviews(self):
+        return self.review_repo.get_all()
+
+    def get_reviews_by_place(self, place_id):
+        pass
+
+    def update_review(self, review_id, review_data):
+        self.review_repo.update(review_id, review_data)
+
+    def delete_review(self, review_id):
+        self.review_repo.delete(review_id)
 
 
 facade = HBnBFacade()
