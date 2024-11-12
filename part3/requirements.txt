@@ -4,3 +4,4 @@ Ubuntu==22.04.5 LTS
 cURL==7.81.0
 Postman==v11.18.0
 flask-bcrypt
+flask-jwt-extended
