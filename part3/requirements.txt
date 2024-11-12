@@ -1,6 +1,0 @@
-Flask==3.0.3
-flask_restx==1.3.0
-Ubuntu==22.04.5 LTS
-cURL==7.81.0
-Postman==v11.18.0
-flask-bcrypt
