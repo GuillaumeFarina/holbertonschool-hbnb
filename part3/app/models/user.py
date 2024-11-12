@@ -2,13 +2,14 @@
 
 import uuid
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from flask_bcrypt import Bcrypt
-from app.models.base_model import BaseModel
+from app import db
+import os
 
 bcrypt = Bcrypt()
 
-class User(BaseModel):
+class User(db.Model):
     """
     User Class:
     - id (String): Unique identifier for each user.
@@ -20,6 +21,19 @@ class User(BaseModel):
     - created_at (DateTime): Timestamp when the user is created.
     - updated_at (DateTime): Timestamp when the user is last updated.
     """
+    __tablename__ = 'users'
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4())) 
+    first_name = db.Column(db.String(50), nullable=False) 
+    last_name = db.Column(db.String(50), nullable=False) 
+    email = db.Column(db.String(120), unique=True, nullable=False) 
+    password = db.Column(db.String(128), nullable=False) 
+    is_admin = db.Column(db.Boolean, default=False) 
+    is_owner = db.Column(db.Boolean, default=False) 
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc)) 
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    jwt_secret_key = db.Column(db.String(128), nullable=False, default=lambda: os.urandom(24))
+    
     def __init__(self, first_name, last_name, email, password, is_admin=False, is_owner=False):
         # Initialize the User with provided attributes and default values
         self.id = str(uuid.uuid4())
